@@ -1,0 +1,42 @@
+2016-01-29 11:30:34: characters:  You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '10:47:31,'','12192983928','34','}')
+               ON DUPLICATE KEY UPDATE refTy' at line 2
+2016-02-05 09:01:06: characters: Edarksid You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ''corporationID')
+               VALUES (90065461,'Edarksid','2012-02-22 17:25:00' at line 1
+2016-02-05 13:01:05: characters: Edarksid You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ''corporationID')
+               VALUES (90065461,'Edarksid','2012-02-22 17:25:00' at line 1
+2016-02-05 17:01:06: characters: Edarksid You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ''corporationID')
+               VALUES (90065461,'Edarksid','2012-02-22 17:25:00' at line 1
+2016-02-05 21:01:06: characters: Edarksid You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ''corporationID')
+               VALUES (90065461,'Edarksid','2012-02-22 17:25:00' at line 1
+2016-02-06 01:01:06: characters: Edarksid You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ''corporationID')
+               VALUES (90065461,'Edarksid','2012-02-22 17:25:00' at line 1
+2016-02-06 05:01:05: characters: Edarksid You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ''corporationID')
+               VALUES (90065461,'Edarksid','2012-02-22 17:25:00' at line 1
+2016-02-06 09:01:07: characters: Edarksid You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ''corporationID')
+               VALUES (90065461,'Edarksid','2012-02-22 17:25:00' at line 1
+2016-02-06 13:01:05: characters: Edarksid You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ''corporationID')
+               VALUES (90065461,'Edarksid','2012-02-22 17:25:00' at line 1
+2016-02-06 17:01:06: characters: Edarksid You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ''corporationID')
+               VALUES (90065461,'Edarksid','2012-02-22 17:25:00' at line 1
+2016-02-06 21:01:07: characters: Edarksid You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ''corporationID')
+               VALUES (90065461,'Edarksid','2012-02-22 17:25:00' at line 1
+2016-02-07 01:01:05: characters: Edarksid You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ''corporationID')
+               VALUES (90065461,'Edarksid','2012-02-22 17:25:00' at line 1
+2016-02-07 05:01:05: characters: Edarksid You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ''corporationID')
+               VALUES (90065461,'Edarksid','2012-02-22 17:25:00' at line 1
+2016-02-07 09:01:07: characters: Edarksid You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ''corporationID')
+               VALUES (90065461,'Edarksid','2012-02-22 17:25:00' at line 1
+2016-02-07 13:01:07: characters: Edarksid You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ''corporationID')
+               VALUES (90065461,'Edarksid','2012-02-22 17:25:00' at line 1
+2016-02-07 15:01:06: characters: Edarksid You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ''corporationID')
+               VALUES (90065461,'Edarksid','2012-02-22 17:25:00' at line 1
+2016-02-07 17:01:06: characters: Edarksid You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ''corporationID')
+               VALUES (90065461,'Edarksid','2012-02-22 17:25:00' at line 1
+2016-05-15 01:01:01: No such file or directory
+2016-05-22 01:01:02: No such file or directory
+2016-06-19 01:01:01: No such file or directory
+2016-06-26 01:01:01: No such file or directory
+2016-06-29 17:01:33: characters: mr Hanuman MySQL server has gone away
+2016-10-09 01:01:01: No such file or directory
+2016-11-06 01:01:01: No such file or directory
+2016-11-10 09:09:13: 1

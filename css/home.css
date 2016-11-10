@@ -1,0 +1,61 @@
+body {
+  margin-top: 45px;
+  margin-bottom: 15px;
+}
+
+.multiple {
+  -moz-column-count:5;
+  -webkit-column-count:5;
+  column-count:5;
+
+  -moz-column-gap:40px;
+  -webkit-column-gap:40px;
+  column-gap:40px;
+
+  -moz-column-rule:1px solid #cccccc;
+  -webkit-column-rule:1px solid #cccccc;
+  column-rule:1px solid #cccccc;
+}
+
+.counter h1 {
+  margin-bottom: 0;
+  margin-left: 25%;
+  font-size: 60px;
+  line-height: 1;
+  letter-spacing: -1px;
+  color: inherit;
+}
+
+.picture a {
+  display: inline-block;
+  border: 3px solid #D75701;
+  -webkit-box-shadow: 0 1px 1px #F9F9F9,inset 0 0 6px black;
+     -moz-box-shadow: 0 1px 1px #f9f9f9,inset 0 0 6px #000;
+          box-shadow: 0 1px 1px #F9F9F9,inset 0 0 6px black;
+}
+
+.picture_128 a {
+  margin-top: 15px;
+  height: 128px;
+  width: 128px;
+  border: 3px solid #6b8e23;
+}
+
+.picture_256 a {
+  height: 256px;
+  width: 256px;
+  border: 3px solid #ff8800;
+}
+
+.chart {
+  margin: 0;
+}
+
+.tableHead {
+  font-weight: bold;
+  vertical-align: bottom;
+}
+
+.tableHover {
+  background-color: #f5f5f5;
+}

@@ -1,0 +1,14 @@
+<?php
+date_default_timezone_set('UTC');
+
+$config = array(  
+  "db" => array(  
+    "dbname" => "spybase",
+    "username" => "spy",
+    "password" => "spy",
+    "host" => "172.17.1.105",
+    "errormsg" => "Problems with DB"
+  ),
+  "log" => "./log/gather.log"
+);
+?>
