@@ -24,7 +24,7 @@ $charid = $_SESSION['CCP']['user']['CharacterID'];
 if(empty($charid)) {
   $where =' WHERE c.corporationID='.$corpid;
 } else {
-  $query_c = 'SELECT roles FROM characters WHERE id='.$charid.' AND roles=9223372036854775807';
+  $query_c = 'SELECT roles FROM characters WHERE id='.$charid.' AND roles=9223372036854775807 AND corporationID='.$corpid;
   if ($result_c = mysqli_query($mysqli, $query_c)) {
     if ($result_c->num_rows > 0) {
         $where =' WHERE c.corporationID='.$corpid;
