@@ -1,0 +1,30 @@
+<?php
+require_once(realpath(dirname(__FILE__))."/"."config.php");
+
+function writeLog ($text) {
+  global $config;
+  global $setting;
+
+  $msg = date("Y-m-d H:i:s").": $text".PHP_EOL;
+  if (!is_null($setting['log_crab'])) {
+    file_put_contents(realpath(dirname(__FILE__)).'/'.$setting['log_crab'],$msg,FILE_APPEND);
+  } else {
+    return 'Ошибка '.$msg;
+  }
+}
+
+$conn = @mysql_connect($config['db']['host'],$config['db']['username'],$config['db']['password']) or die(writeLog(mysql_error()));
+@mysql_select_db($config['db']['dbname']) or die(writeLog(mysql_error()));
+//Main corp
+
+$id = $_GET['id'];
+$comment = $_GET['comment'];
+
+//foreach($setting['corpID'] as $corpID_arr){
+      mysql_query("INSERT INTO `comments` (`id`,`comment`)
+                   VALUES ('{$id}','{$comment}')
+                   ON DUPLICATE KEY UPDATE comment='{$comment}'") or die(mysql_error());
+
+mysql_close($conn);
+
+?>
