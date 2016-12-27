@@ -1,6 +1,7 @@
 <?php 
     require("config.php"); 
     $submitted_username = ''; 
+//    session_start();
     if(!empty($_GET['u'])){ 
         $options = array(PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8');     
         try { $db = new PDO("mysql:host={$config['db']['host']};dbname={$config['db']['dbname']};charset=utf8", $config['db']['username'], $config['db']['password'], $options); } 
@@ -8,7 +9,7 @@
         $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION); 
         $db->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC); 
         header('Content-Type: text/html; charset=utf-8'); 
-        session_start(); 
+        session_start();
         $query = " 
             SELECT 
                 id, 
@@ -40,7 +41,10 @@
  
         if($login_ok){ 
             $_SESSION['user'] = $row['username'];
-            print($_SESSION['user']);
+            $_SESSION['director'] = 1;
+//            print($_SESSION['user']);
+            print(session_id());
+//            session_write_close();
         } 
         else{ 
             print("Login Failed."); 
