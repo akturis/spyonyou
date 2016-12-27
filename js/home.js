@@ -1,9 +1,25 @@
 google.load('visualization', '1.0', {'packages':['table', "corechart"]});
 google.load('visualization', '1.0', {'packages':['controls']});
+google.load('visualization', '1.0', {'packages':['calendar']});
 
 google.setOnLoadCallback(drawIt);
 var corpid = '604035876';
 var selectedUserId='';
+var lChart;
+var suid=getAccess();
+
+function getAccess() {
+    $.ajax({
+     url: "../php/getAccess.php",
+     async: true,
+     success: function(data) {
+         return $.trim(data);
+//       var result = !$.trim(data);
+//       suid = $.trim(data);
+//       if (result) return 0; else return 1;
+     }
+    });
+}
 
 $.urlParam = function(name){
 	        var results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href);
@@ -23,36 +39,6 @@ $.urlP = function(name,url){
 	        }
 };        
 
-function showIGB() { // On dom ready
-
-    // Ajax call to the script above, assuming you saved it as "headers.php"
-    $.ajax({
-     url: "../php/header.php",
-     success:  function(data) {
-
-        // The trust boolean value
-        var trusted = data.trusted;
-        // The content of the headers, "un-prefixed"
-        var values = data.values;
-            console.log("Hello Eve");
-            console.log(data);
-
-        if (!trusted) { // Set to false, trust is required
-            // Ask for trust
-            CCPEVE.requestTrust(
-                location.protocol
-                + '//' +
-                location.host
-            );
-        }
-        else { // Trust is granted, we have the data
-            // Lets greet the player by name
-            console.log("Granted");
-//            showSheet(values['charid']);
-        }
-     }
-    });
-}
 
 function drawDashboard() {
         // Create a dashboard.
@@ -132,6 +118,53 @@ function drawDashboard() {
             value: ''
           }
         });
+        var donutA = new google.visualization.ControlWrapper({
+          'controlType': 'NumberRangeFilter',
+          'containerId': 'filter_div5',
+          'options': {
+            'filterColumnLabel': 'Anomalies',
+            'ui': { 
+                allowTyping: false,
+				allowMultiple: true,
+				electedValuesLayout: 'belowStacked'
+            }
+          },
+          state: {
+            value: ''
+          }
+        });
+        var donutB = new google.visualization.ControlWrapper({
+          'controlType': 'NumberRangeFilter',
+          'containerId': 'filter_div6',
+          'options': {
+            'filterColumnLabel': 'Bounty',
+            'ui': { 
+                allowTyping: false,
+				allowMultiple: true,
+				electedValuesLayout: 'belowStacked'
+            }
+          },
+          state: {
+            value: ''
+          }
+        });
+
+        var donutRating = new google.visualization.ControlWrapper({
+          'controlType': 'NumberRangeFilter',
+          'containerId': 'filter_div7',
+          'options': {
+            'filterColumnLabel': 'Rating',
+            'ui': { 
+                allowTyping: false,
+				allowMultiple: true,
+				electedValuesLayout: 'belowStacked'
+            }
+          },
+          state: {
+            value: ''
+          }
+        });
+        
         $.urlParam = function(name){
 	        var results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href);
 	        if (results===null) {
@@ -160,7 +193,7 @@ function drawDashboard() {
           formatter.format(data, 11);       
           var view= new google.visualization.DataView(data);
         view.setColumns([0,1,2,3,{column:5, calc:StringToDate, type:'date', label:'Start date'},6,
-        {column:7, calc:StringToDate2, type:'date', label:'Last login'},8,9,10,11,12,13,{column:14, calc:setRating, type:'number', label:'Rating'}]);
+        {column:7, calc:StringToDate2, type:'date', label:'Last login'},8,9,10,11,12,13,14,{column:15, calc:setRating, type:'number', label:'Rating'}]);
 
         var cssClassNames = {
         'headerRow': 'tableHead',
@@ -206,57 +239,12 @@ function drawDashboard() {
         var addListener2 = google.visualization.events.addListener;
         addListener(table, 'ready', function() { 
             google.visualization.events.removeListener(addListener);
-            $('#membersTable a').click(function(e){ e.preventDefault(); showSheet($(this).attr('href').replace('#', '')); }); 
+            $('#membersTable').on('click', 'a', function(e){ e.preventDefault(); showSheet($(this).attr('href').replace('#', ''),$days); }); 
         });
-//        addListener(table, 'sort', function() { $('#membersTable a').click(function(e){ e.preventDefault(); showSheet($(this).attr('href').replace('#', '')); }); });
-//        addListener(view, 'ready', function() { $('#membersTable a').click(function(e){ e.preventDefault(); showSheet($(this).attr('href').replace('#', '')); }); });
-//        addListener(view, 'sort', function() { $('#membersTable a').click(function(e){ e.preventDefault(); showSheet($(this).attr('href').replace('#', '')); }); });
-//        addListener(dashboard, 'ready', function() { $('#dashboard_div a').click(function(e){ e.preventDefault(); showSheet($(this).attr('href').replace('#', '')); }); });
-//        addListener(dashboard, 'sort', function() { $('#dashboard_div a').click(function(e){ e.preventDefault(); showSheet($(this).attr('href').replace('#', '')); }); });
-        // Establish dependencies, declaring that 'filter' drives 'pieChart',
-        // so that the pie chart will only display entries that are let through
-        // given the chosen slider range.
-//        dashboard.bind(donutRangeSlider, table);
-//        dashboard.bind(donutRangeSliderDate, data);
-//        table.setDataTable(view);
-        dashboard.bind([donutRangeSlider,donutRangeSliderDate,donutLastDate,donutDayinPVP,donutM], table);
-//        dashboard.bind([donutRangeSlider,donutRangeSliderDate,donutLastDate], view);
-        //        table.draw(data, options);
-        // Draw the dashboard.
+        dashboard.bind([donutRangeSlider,donutRangeSliderDate,donutLastDate,donutDayinPVP,donutM,donutA,donutB,donutRating], table);
        dashboard.draw(view);
-//        table.draw(data);
-//        donutRangeSliderDate.draw();
         });
       }
-
-function drawTable() {
-    var cssClassNames = {
-    'headerRow': 'tableHead',
-    'tableRow': 'dummy',
-    'oddTableRow': 'dummy',
-    'selectedTableRow': 'dummy',
-    'hoverTableRow': 'tableHover',
-    'headerCell': 'dummy',
-    'tableCell': 'dummy',
-    'rowNumberCell': 'dummy'};
-
-  var options = {'showRowNumber': false, 'allowHtml': true, 'cssClassNames': cssClassNames, 'sortColumn':4, sortAscending:false};
-
-  var jsonData = $.ajax({
-    url: "../php/getJSON.php",
-    dataType:"json",
-    async: false
-  }).responseText;
-
-  var data = new google.visualization.DataTable(jsonData);
-  var conatiner = document.getElementById('membersTable');
-  var table = new google.visualization.Table(conatiner);
-
-  var addListener = google.visualization.events.addListener;
-  addListener(table, 'ready', function() { $('#membersTable a').click(function(e){ e.preventDefault(); showSheet($(this).attr('href').replace('#', '')); }); });
-  addListener(table, 'sort', function() { $('#membersTable a').click(function(e){ e.preventDefault(); showSheet($(this).attr('href').replace('#', '')); }); });
-  table.draw(data, options);
-}
 
 function drawChart() {
   // Create and populate the data table.
@@ -275,6 +263,7 @@ function drawChart() {
       draw(data, {
                   theme: "maximized",
                   legend: "none",
+                  curveType: "function",
                   colors:['black','green','red'],
                   focusTarget: "category",
                   lineWidth: 3,
@@ -283,17 +272,105 @@ function drawChart() {
           );
 }
 
+function drawChartCalendar() {
+    $.ajax({
+     url: "../php/getAccess.php",
+     async: true,
+     success: function(_data) {
+      if ($.trim(_data)) {
+          var jsonData = $.ajax({
+            url: "../php/getCalendar.php?corpid="+corpid,
+            dataType:"json",
+             beforeSend: function() { $('#wait2').show(); },
+             complete: function() { $('#wait2').hide(); },
+            async: false
+          }).responseText;
+        
+          var data = new google.visualization.DataTable(jsonData);
+        
+          // Create and draw the visualization.
+          new google.visualization.Calendar(document.getElementById('Calendar')).
+              draw(data, { height: 250}
+                  );
+           
+         }
+     } 
+    });  // Create and populate the data table.
+}
+function drawChartBalance() {
+    $.ajax({
+     url: "../php/getAccess.php",
+     async: false,
+     success: function(_data) {
+      if(lChart!=undefined) lChart.clearChart();
+      if ($.trim(_data) === "1") {
+          var jsonData = $.ajax({
+            url: "../php/getBalance.php?corpid="+corpid,
+            dataType:"json",
+             beforeSend: function() { $('#wait2').show(); },
+             complete: function() { $('#wait2').hide(); },
+            async: false
+          }).responseText;
+        
+          var data = new google.visualization.DataTable(jsonData);
+        
+          // Create and draw the visualization.
+          lChart = new google.visualization.ColumnChart(document.getElementById('Balance'));
+              lChart.draw(data, {
+                          theme: "maximized",
+                          legend: "none",
+//                          curveType: "function",
+                          colors:['green','blue','red'],
+                          focusTarget: "category",
+                          lineWidth: 3,
+                          pointSize: 4,
+                          width: 1000,
+        		  height: 250}
+                  );
+           
+         }
+     } 
+    });  // Create and populate the data table.
+}
+
+function drawChartPrime() {
+  // Create and populate the data table.
+  var jsonData = $.ajax({
+    url: "../php/getPrime.php?corpid="+corpid,
+    dataType:"json",
+     beforeSend: function() { $('#wait2').show(); },
+     complete: function() { $('#wait2').hide(); },
+    async: false
+  }).responseText;
+
+  var data = new google.visualization.DataTable(jsonData);
+
+  // Create and draw the visualization.
+  new google.visualization.LineChart(document.getElementById('Prime')).
+      draw(data, {
+                  theme: "maximized",
+                  legend: "none",
+                  curveType: "function",
+                  colors:['blue','red','green'],
+                  focusTarget: "category",
+                  lineWidth: 3,
+                  pointSize: 4,
+                  width: 1000,
+		  height: 250}
+          );
+}
+
 function drawIt() {
-//  drawTable();
   drawChart();
-//  check_sso();
+  drawChartBalance();
+  drawChartPrime();
   drawDashboard();
 }
 
-function showSheet(id,text='') {
+function showSheet(id,days=30,text='') {
   $.ajax({
     url: "../php/getSheet.php",
-    data: {id: id, text: text},
+    data: {id: id, text: text, days: days},
     success: function(data) {
       $('.modal-body').html(data);
       $('.modal').modal();
@@ -315,12 +392,6 @@ function drawBottom() {
 }
 
 function drawOptions() {
-    $.ajax({
-     url: "../php/getOptions.php",
-     success: function(data) {
-       $('#options').html(data);
-     }
-    });
 }
 
 function auth (p) {
@@ -334,10 +405,8 @@ function auth (p) {
       $('#status').text(data);
       $('#login').toggle();
       drawOptions();
-//      $('#gather').toggle();
-//      drawBottom();
-//      drawTable();
       drawDashboard();
+      drawChartBalance();
     }
   }
   });
@@ -347,18 +416,14 @@ function login (p) {
   $.ajax({
   type: "POST",
   url: "../php/login.php?u="+usr.value+"&p="+pwd.value,
-  success: function(data) {
+  success: function(data,e) {
      console.log(data);
+     suid = $.trim(data);
+
       getButton();
-//     $('.login-form').html(data);
-//     data = $_SESSION['user'];
-//     $('#status').text(data);
-//      $('#submit').toggle();
       drawOptions();
-//      $('#gather').toggle();
-//      drawBottom();
-//      drawTable();
       drawDashboard();
+      drawChartBalance();
   }
   });
 }
@@ -366,21 +431,19 @@ function logout () {
   $.ajax({
   url: "../php/logout.php",
   success: function(data) {
+      suid="";
+
       getButton();
-//     $('.login-form').html(data);
-//     $('#status').text(data);
-//      $('#submit').toggle();
       drawOptions();
-//      $('#gather').toggle();
-//      drawBottom();
-//      drawTable();
       drawDashboard();
+      drawChartBalance();
   }
   });
 }
 function check_sso() {
     $.ajax({
      url: "../php/sso_super.php",
+     async:false,
      success: function(data) {
        $('.login-sso').html(data);
         $("#ssoSelectButton").click(function(e){
@@ -417,6 +480,7 @@ function getButton() {
      success: function(data) {
        $('.login-form').html(data);
        $('#submit').click(function(p){
+         p.preventDefault();
          login(p);
        });
        $('#logout').click(function(){
@@ -425,40 +489,88 @@ function getButton() {
        });
      }
     });    
-}
-//function get_data () {
-//  $.ajax({
-//  url: "../php/gather.php",
-//  success: function(data) {
-//      $('#status1').text(data);
-//  }
-//  });
-//}
-
-!function ($) {
-  $(function(){
-    var $window = $(window)
-//    $.ajax({
-//     url: "../php/getTop.php",
-//     success: function(data) {
-//       $('#top').html(data);
-//       $('a#topchar').click(function(e){ e.preventDefault(); showSheet($(this).attr('href').replace('#', '')); });
-//       $('a#topship').click(function(e) { e.preventDefault(); $(this).closest('div').effect('shake'); } );
-//     }
-//    });
-//    drawBottom();
     $.ajax({
-     url: "../php/getCount.php",
+     url: "../php/getAccess.php",
+     async: false,
+     success: function(_data) {
+      if ($.trim(_data) === "1") {
+        $('#comment_div').show();
+        $('#Balance').show();
+      } else {
+        $('#comment_div').hide();
+        $('#Balance').hide();
+      }
+     } 
+    });  
+}
+function getCount(){
+    $.ajax({
+     url: "../php/getCount.php?corpid="+corpid,
      beforeSend: function() { $('#wait1').show(); },
      complete: function() { $('#wait1').hide(); },
      success: function(data) {
        $('.counter').html(data);
      }
     });
+}
+
+!function ($) {
+  $(function(){
+    var $window = $(window)
+    $.ajax({
+     url: "../php/getCorp.php",
+     success: function(data) {
+       $('#corp2').html(data);
+        $('.dropdown-toggle').dropdown();
+          $("li a").click(function(){
+    //           $('#nav li').removeClass();
+    //           $(this).parent().addClass('active');   
+               $('#corp').text($(this).text());   
+          });
+        $('#fsp-t').click(function(){
+           corpid = '604035876'; 
+           getButton();
+           drawOptions();
+           drawDashboard();
+           drawChartBalance();
+           drawChartPrime();
+           getCount();
+        });
+        $('#academy').click(function(){
+           corpid = '98399497'; 
+           getButton();
+           drawOptions();
+           drawDashboard();
+           drawChartBalance();
+           drawChartPrime();
+           getCount();
+        });
+        $('#geten').click(function(){
+           corpid = '98360267'; 
+           getButton();
+           drawOptions();
+           drawDashboard();
+           drawChartBalance();
+           drawChartPrime();
+           getCount();
+        });
+        $('#fsp-b').click(function(){
+           corpid = '1268814498'; 
+           getButton();
+           drawOptions();
+           drawDashboard();
+           drawChartBalance();
+           drawChartPrime();
+           getCount();
+        });
+     }
+    });
+    getCount();
     $.ajax({
      url: "../php/getPilots.php",
      success: function(data) {
        $('#charlist').html(data);
+        $days = ( $.urlParam("days") === 0 ) ? 30 : $.urlParam("days") ;
        var pilots = [];
        $("#charlist").find("div").each(function(){ pilots.push($(this).attr('class')); });
        $('.search-query').typeahead({source:pilots});
@@ -466,57 +578,53 @@ function getButton() {
          if ( event.which == 13 ) {
            event.preventDefault();
            pid=$("[class='"+$(this).val()+"']").attr("id");
-           if (pid) showSheet(pid);
+           if (pid) showSheet(pid,$days);
            return;
          }
        });
        $('.search-query').change(function(){
          if (event.type=='change') {
            pid=$("[class='"+$('li.active').attr('data-value')+"']").attr("id");
-           if (pid) showSheet(pid);
+           if (pid) showSheet(pid,$days);
          }
        });
+       $('.search').typeahead({source:pilots});
+       $('.search').change(function(){
+         if (event.type=='change') {
+           pid=$("[class='"+$('li.active').attr('data-value')+"']").attr("id");
+//           if (pid) showSheet(pid,$days);
+         }
+       });
+       $.ajax({
+        url: "../php/getAccess.php",
+        async: false,
+        success: function(_data) {
+            if ($.trim(_data) === "1") {
+               $('#comment').click(function(){
+                   pid=$("[class='"+$('li.active').attr('data-value')+"']").attr("id");
+                   $.ajax({
+                     type: "POST",
+                     url: "../php/setComment.php?id="+pid+"&comment="+$('.comment').val(),
+                     beforesend: function() {  },
+                     success: function(data) {
+                         drawDashboard();
+                     }
+                   });
+               });
+            }
+        } 
+       });
+
+
      }
     });
     getButton();
     
-    $('#fsp-t').click(function(){
-       corpid = '604035876'; 
-       getButton();
-       drawOptions();
-       drawDashboard();
-    });
-    $('#academy').click(function(){
-       corpid = '98399497'; 
-       getButton();
-       drawOptions();
-       drawDashboard();
-    });
-    $('#geten').click(function(){
-       corpid = '98360267'; 
-       getButton();
-       drawOptions();
-       drawDashboard();
-    });
-
-    $('#igb').click(function(){
-     showIGB();
-    });
-//    $('#login').click(function(){
-//     auth();
-//    });
-//    $('#gather').click(function(){
-//     get_data();
-//    });
-
-//    drawTable();
-//    auth("query=1");
-    $('.dropdown-toggle').dropdown();
+    $('#corp .dropdown-toggle').dropdown();
       $("li a").click(function(){
 //           $('#nav li').removeClass();
 //           $(this).parent().addClass('active');   
            $('#corp').text($(this).text());   
       });
-      
   })
 }(window.jQuery)
