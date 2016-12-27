@@ -16,9 +16,13 @@ function writeLog ($text) {
 $conn = @mysql_connect($config['db']['host'],$config['db']['username'],$config['db']['password']) or die(mysql_error());
 @mysql_select_db($config['db']['dbname']) or die(writeLog(mysql_error()));
 
-$corpid_m = $setting['corpID']['FSP-T']['corporationID'];
-$corpid_a = $setting['corpID']['ACADEMY']['corporationID'];
-$corpid_g = $setting['corpID']['Geten']['corporationID'];
+$corp_exist =array();
+foreach($setting['corpID'] as $corpid){
+    $corp_exist[] = $corpid['corporationID'];
+}
+//$corpid_m = $setting['corpID']['FSP-T']['corporationID'];
+//$corpid_a = $setting['corpID']['ACADEMY']['corporationID'];
+//$corpid_g = $setting['corpID']['Geten']['corporationID'];
 
 $query = mysql_query("SELECT * FROM characters WHERE 1;") or die(mysql_error());
 $rows = array();
@@ -48,14 +52,14 @@ foreach ($rows as $row) {
     foreach ($xmlKills->result->rowset->row as $kill) {
       $urlkill = urlencode ($kill['killid']);
       $_chid = $kill->victim['characterID'];
-      if (($kill->victim['corporationID'] == $corpid_m) or ($kill->victim['corporationID'] == $corpid_a) or ($kill->victim['corporationID'] == $corpid_g)) {
+      if (in_array($kill->victim['corporationID'], $corp_exist)) {
           @mysql_query("INSERT INTO kills (`killID`,`characterID`,`attackerID`,`killTime`,`killInternalID`,`victimID`)
                    VALUES ({$kill['killID']},{$_chid},{$_chid},'{$kill['killTime']}',{$kill['killID']},{$_chid})
                     ON DUPLICATE KEY UPDATE killID={$kill['killID']},characterID={$_chid}") or die(writeLog(mysql_error()));
       }  
       
       foreach ($kill->rowset->row as $attack) {
-        if (($attack['corporationID'] == $corpid_m) or ($attack['corporationID'] == $corpid_a) or ($attack['corporationID'] == $corpid_g)) {  
+        if (in_array($attack['corporationID'], $corp_exist)) {  
           @mysql_query("INSERT INTO kills (`killID`,`characterID`,`attackerID`,`killTime`,`killInternalID`,`victimID`)
                    VALUES ({$kill['killID']},{$attack['characterID']},{$attack['characterID']},'{$kill['killTime']}',{$kill['killID']},{$_chid})
                     ON DUPLICATE KEY UPDATE killID={$kill['killID']},characterID={$attack['characterID']}") or die(writeLog(mysql_error()));
