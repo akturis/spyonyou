@@ -24,7 +24,7 @@
       <div class="navbar-inner">
         <div class="container">
           <a class="brand" href="#">Member tracker</a>
-          <ul class="nav" role="navigation">
+          <ul class="nav" id="corp2" role="navigation">
             <li class="dropdown">
               <a id="corp" href="#" role="button" class="dropdown-toggle" data-toggle="dropdown">FSP-T <b class="caret"></b></a>
                 <ul class="dropdown-menu" role="menu" aria-labelledby="Corporation">
@@ -66,6 +66,19 @@
                 </div>
                 <div id="filter_div4">
                 </div>
+                <div id="filter_div5">
+                </div>
+                <div id="filter_div6">
+                </div>
+                <div id="filter_div7">
+                </div>
+                <div id="comment_div">
+                    <form class="navbar-search pull-left" action="">
+                        <input type="text" data-provide="typeahead" class="search span2" placeholder="Pilot">
+                        <input type="text" data-provide="typeahead" class="comment span5" placeholder="Comment">
+                        <button id="comment" class="btn pull-right" type="button">Change</button>
+                    </form>
+                </div>
                 <table id="membersTable" class="table table-striped table-condensed"></table>
         </div>
         <div class="span3" id="top">
@@ -86,11 +99,17 @@
         </div>
       </div>
       <hr>
-      <h2>Low activity pilots</h2>
-      <div class="multiple" id="bottom"></div>
+      <h2>Balance</h2>
+      <div class="chart" id="Balance"></div>
+      <hr>
+      <h2>Prime time</h2>
+      <div class="chart" id="Prime"></div>
+      <hr>
+      <h2>Calendar</h2>
+      <div class="chart" id="Calendar"></div>
       <hr>
       <footer>
-        <p>created in love with twitter, google &amp; jquery &copy; banderlogs 2012</p>
+        <p>created in love with twitter, google &amp; jquery &copy; banderlogs 2016</p>
       </footer>
 
     </div> <!-- /container -->
