@@ -12,59 +12,54 @@ function writeLog ($text) {
     return $msg;
   }
 }
-//writelog("start");
-$conn = @mysql_connect($config['db']['host'],$config['db']['username'],$config['db']['password']) or die(mysql_error());
-@mysql_select_db($config['db']['dbname']) or die(writeLog(mysql_error()));
+echo "start";
+$mysqli = mysqli_connect($config['db']['host'],$config['db']['username'],$config['db']['password'],$config['db']['dbname']) or die(writeLog(mysqli_connect_error()));
 
-$corpid_m = $setting['corpID']['FSP-T']['corporationID'];
-$corpid_a = $setting['corpID']['ACADEMY']['corporationID'];
-$corpid_g = $setting['corpID']['Geten']['corporationID'];
-
-$query = mysql_query("SELECT * FROM characters WHERE 1;") or die(mysql_error());
-$rows = array();
-while($row = mysql_fetch_array($query))
-    $rows[] = $row;
-foreach ($rows as $row) {
-  $name = str_replace("'","''",$row['name']);
-  $urlid = urlencode ($row['id']);
-// writelog($name);
-//  @$xmlKills=simplexml_load_file("http://eve-kill.net/?a=idfeed&pilotname=$urlname&lastID=$lastId");
-  $ch1 = curl_init();
-  $now_date = date('Ymd').'0000';
-//  writelog($now_date);
-  $lastId = mysql_query("SELECT MAX(killID) id FROM `kills` WHERE characterID={$urlid}") or die(writeLog(mysql_error()));
-  if ($lastId = mysql_fetch_assoc($lastId)) $lastId=($lastId==="")?"":$lastId['id'];
-//  writelog($lastId);
-  curl_setopt ($ch1, CURLOPT_URL,"https://zkillboard.com/api/characterID/$urlid/afterkillID/$lastId/no-items/xml/" );
-//  curl_setopt ($ch1, CURLOPT_URL,"https://zkillboard.com/api/corporationID/604035876/xml/no-items/" );
-  curl_setopt ($ch1, CURLOPT_RETURNTRANSFER,1 );
-  curl_setopt ($ch1, CURLOPT_HEADER,0 );
-
-  $data = curl_exec($ch1);
-  curl_close($ch1);
-  $xmlKills=simplexml_load_string($data);
-
-  if (is_object($xmlKills)) {
-    foreach ($xmlKills->result->rowset->row as $kill) {
-      $urlkill = urlencode ($kill['killid']);
-      $_chid = $kill->victim['characterID'];
-      if (($kill->victim['corporationID'] == $corpid_m) or ($kill->victim['corporationID'] == $corpid_a) or ($kill->victim['corporationID'] == $corpid_g)) {
-          @mysql_query("INSERT INTO kills (`killID`,`characterID`,`attackerID`,`killTime`,`killInternalID`,`victimID`)
-                   VALUES ({$kill['killID']},{$_chid},{$_chid},'{$kill['killTime']}',{$kill['killID']},{$_chid})
-                    ON DUPLICATE KEY UPDATE killID={$kill['killID']},characterID={$_chid}") or die(writeLog(mysql_error()));
+$corp_exist =array();
+foreach($setting['corpID'] as $corpid){
+    $corp_exist[] = $corpid['corporationID'];
+}
+//$corpid_m = $setting['corpID']['FSP-T']['corporationID'];
+//$corpid_a = $setting['corpID']['ACADEMY']['corporationID'];
+//$corpid_g = $setting['corpID']['Geten']['corporationID'];
+foreach($setting['corpID'] as $corpID_arr){
+//    $xmlUrl="https://api.eveonline.com/corp/KillMails.xml.aspx?keyID={$corpID_arr['keyID']}&vCode={$corpID_arr['vCode']}&rowCount=300";
+    $xmlUrl="https://zkillboard.com/api/corporationID/{$corpID_arr['corporationID']}/limit/200/no-items/";
+    //$xmlObj=simplexml_load_file($xmlUrl);
+    //var_dump(libxml_use_internal_errors(true));
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL,$xmlUrl );
+    curl_setopt($ch , CURLOPT_RETURNTRANSFER,1 );
+    curl_setopt($ch,CURLOPT_ENCODING , 'gzip');
+    curl_setopt($ch, CURLOPT_HEADER,0 );
+    curl_setopt( $ch, CURLOPT_USERAGENT, "User-Agent: http://spy.ddcreation.ru/ Maintainer: Akturis daw99@mail.ru" );
+    
+    $data = curl_exec($ch);
+    curl_close($ch);
+    
+//    $xmlObj=simplexml_load_string($data);
+    $xmlObj=json_decode($data,true);
+//  if (is_object($xmlObj)) {
+    foreach ($xmlObj as $key => $kill) {
+      $urlkill = urlencode ($kill['killmail_id']);
+      $_chid = $kill['victim']['character_id'];
+      if($_chid == '0') continue;
+      if (in_array($kill['victim']['corporation_id'], $corp_exist)) {
+          mysqli_query($mysqli,"INSERT INTO kills (`killID`,`characterID`,`attackerID`,`killTime`,`killInternalID`,`victimID`)
+                   VALUES ({$kill['killmail_id']},{$_chid},{$_chid},'{$kill['killmail_time']}',{$kill['killmail_id']},{$_chid})
+                    ON DUPLICATE KEY UPDATE killID={$kill['killmail_id']},characterID={$_chid}") or die(writeLog(mysqli_connect_error()));
       }  
-      
-      foreach ($kill->rowset->row as $attack) {
-        if (($attack['corporationID'] == $corpid_m) or ($attack['corporationID'] == $corpid_a) or ($attack['corporationID'] == $corpid_g)) {  
-          @mysql_query("INSERT INTO kills (`killID`,`characterID`,`attackerID`,`killTime`,`killInternalID`,`victimID`)
-                   VALUES ({$kill['killID']},{$attack['characterID']},{$attack['characterID']},'{$kill['killTime']}',{$kill['killID']},{$_chid})
-                    ON DUPLICATE KEY UPDATE killID={$kill['killID']},characterID={$attack['characterID']}") or die(writeLog(mysql_error()));
+      foreach ($kill['attackers'] as $key2 => $attack) {
+        if (in_array($attack['corporation_id'], $corp_exist)) {  
+          mysqli_query($mysqli,"INSERT INTO kills (`killID`,`characterID`,`attackerID`,`killTime`,`killInternalID`,`victimID`)
+                   VALUES ({$kill['killmail_id']},{$attack['character_id']},{$attack['character_id']},'{$kill['killmail_time']}',{$kill['killmail_id']},{$_chid})
+                    ON DUPLICATE KEY UPDATE killID={$kill['killmail_id']},characterID={$attack['character_id']}") or die(writeLog(mysqli_connect_error()));
         }          
-      }            
+      } //if
     }
-  }
+//  }
 }
 
-mysql_close($conn);
+mysqli_close($mysqli);
 
 ?>
