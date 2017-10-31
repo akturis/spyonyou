@@ -32,7 +32,7 @@ foreach($setting['corpID'] as $corpID_arr){
     curl_setopt($ch , CURLOPT_RETURNTRANSFER,1 );
     curl_setopt($ch,CURLOPT_ENCODING , 'gzip');
     curl_setopt($ch, CURLOPT_HEADER,0 );
-    curl_setopt( $ch, CURLOPT_USERAGENT, "User-Agent: http://spy.ddcreation.ru/ Maintainer: Akturis daw99@mail.ru" );
+    curl_setopt( $ch, CURLOPT_USERAGENT, "User-Agent: http://spy.banderlogs.ru/ Maintainer: Akturis daw99@mail.ru" );
     
     $data = curl_exec($ch);
     curl_close($ch);
